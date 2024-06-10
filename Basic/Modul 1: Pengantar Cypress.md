@@ -35,15 +35,33 @@ Untuk memulai menggunakan Cypress, Anda perlu menginstalnya di lingkungan pengem
     ```bash
     npx cypress open
     ```
+ 
+##### 3. Struktur Proyek Cypress & Konfigurasi Proyek Cypress
+Setelah instalasi, Anda perlu melakukan beberapa konfigurasi dasar untuk menyiapkan proyek Cypress Anda.
 
-##### 3. Struktur Proyek Cypress
-Memahami struktur folder dan file dalam proyek Cypress sangat penting untuk mengelola tes Anda dengan baik.
+- **Membuka Cypress:**
+  - Buka Cypress untuk pertama kalinya dengan perintah:
+    ```bash
+    npx cypress open
+    ```
+  - Cypress akan membuat struktur folder dan file default di dalam proyek Anda.
 
-- **File Konfigurasi:** `cypress.json` digunakan untuk mengatur konfigurasi global Cypress.
-- **Direktori Penting:**
-  - `integration`: Tempat menyimpan file tes.
-  - `fixtures`: Tempat menyimpan data statis yang digunakan dalam tes.
-  - `support`: Menyimpan skrip khusus yang dibutuhkan dalam tes.
+- **Struktur Folder dan File Cypress:**
+  - `cypress/`: Folder utama Cypress yang berisi subfolder untuk tes, fixtures, dan support.
+    - `integration/`: Tempat menyimpan file tes.
+    - `fixtures/`: Menyimpan data statis yang digunakan dalam tes.
+    - `support/`: Menyimpan skrip khusus dan file konfigurasi tambahan.
+  - `cypress.json`: File konfigurasi utama Cypress untuk mengatur berbagai pengaturan seperti baseUrl, viewport, dll.
+
+- **Contoh Konfigurasi `cypress.json`:**
+  ```json
+  {
+    "baseUrl": "http://localhost:3000",
+    "viewportWidth": 1280,
+    "viewportHeight": 720
+  }
+  ```
+
 
 ##### 4. Menjalankan Tes Pertama dengan Cypress
 Membuat dan menjalankan tes pertama Anda di Cypress sangat mudah dan intuitif.
