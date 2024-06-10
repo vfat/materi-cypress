@@ -257,3 +257,301 @@ DEBUG=cypress:cli,cypress:server:specs
 7. [Troubleshooting Guide](https://docs.cypress.io/guides/references/troubleshooting)
 
 Dengan memahami dan mempraktikkan materi ini, Anda akan lebih siap untuk mengonfigurasi dan menjalankan pengujian menggunakan Cypress secara efektif.
+
+---
+CONTOH:
+---
+
+## Sample 1: 
+
+### File Konfigurasi `cypress.config.js`
+
+```javascript
+const { defineConfig } = require('cypress');
+
+module.exports = defineConfig({
+  e2e: {
+    baseUrl: 'http://localhost:1234',
+  },
+});
+```
+
+## Sample E2E Test
+
+### Struktur Proyek
+
+```
+cypress/
+  e2e/
+    login.cy.js
+  support/
+    e2e.js
+cypress.config.js
+```
+
+### File Konfigurasi `cypress/support/e2e.js`
+
+```javascript
+// This support file is loaded before each test file
+Cypress.on('uncaught:exception', (err, runnable) => {
+  // returning false here prevents Cypress from failing the test
+  return false;
+});
+
+// You can add custom commands here
+Cypress.Commands.add('login', (username, password) => {
+  cy.visit('/login');
+  cy.get('input[name=username]').type(username);
+  cy.get('input[name=password]').type(password);
+  cy.get('button[type=submit]').click();
+});
+```
+
+### Sample Test `cypress/e2e/login.cy.js`
+
+```javascript
+describe('Login Tests', () => {
+  beforeEach(() => {
+    cy.visit('/');
+  });
+
+  it('should redirect unauthenticated user to sign-in page', () => {
+    cy.visit('/dashboard');
+    cy.url().should('include', '/login');
+  });
+
+  it('allows user to login', () => {
+    cy.login('testuser', 'testpassword');
+    cy.url().should('include', '/dashboard');
+  });
+
+  it('should show an error on invalid login', () => {
+    cy.visit('/login');
+    cy.get('input[name=username]').type('wronguser');
+    cy.get('input[name=password]').type('wrongpassword');
+    cy.get('button[type=submit]').click();
+    cy.get('.error-message').should('contain', 'Invalid username or password');
+  });
+});
+```
+
+## Langkah-Langkah untuk Menjalankan Cypress
+
+1. **Instal Cypress**: Pastikan Cypress sudah terinstal di proyek Anda. Jika belum, instal dengan perintah berikut:
+
+   ```shell
+   npm install cypress --save-dev
+   ```
+
+2. **Buka Cypress**: Buka Cypress dengan perintah:
+
+   ```shell
+   npx cypress open
+   ```
+
+3. **Jalankan Tes E2E**: Pilih file spesifikasi di bawah folder `cypress/e2e` untuk menjalankan tes E2E.
+
+### Penjelasan Konfigurasi dan Tes
+
+1. **Konfigurasi**:
+   - File `cypress.config.js` mengatur dasar URL untuk semua tes E2E menjadi `http://localhost:1234`. Ini berarti setiap kali Anda menggunakan `cy.visit('/')`, Cypress akan pergi ke `http://localhost:1234/`.
+
+2. **Support File**:
+   - File `cypress/support/e2e.js` digunakan untuk menambahkan konfigurasi global atau perintah kustom yang dapat digunakan di semua tes. Misalnya, perintah kustom `cy.login`.
+
+3. **Sample Test**:
+   - File `cypress/e2e/login.cy.js` berisi beberapa tes untuk halaman login. Tes ini mencakup:
+     - Memeriksa apakah pengguna yang tidak terautentikasi diarahkan ke halaman login.
+     - Memastikan bahwa pengguna dapat login dengan kredensial yang benar.
+     - Menampilkan pesan kesalahan ketika login dengan kredensial yang salah.
+
+Dengan konfigurasi dan contoh tes ini, Anda siap untuk mulai menggunakan Cypress untuk menguji aplikasi Anda secara otomatis. Pastikan untuk menyesuaikan tes sesuai dengan kebutuhan spesifik aplikasi Anda.
+
+---
+
+## Sample 2
+
+### File Konfigurasi `cypress.config.js`
+
+```javascript
+const { defineConfig } = require('cypress');
+
+module.exports = defineConfig({
+  e2e: {
+    baseUrl: 'http://localhost:1234',
+    setupNodeEvents(on, config) {
+      // Event node setup code here
+    },
+    supportFile: 'cypress/support/e2e.js',
+    specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
+    slowTestThreshold: 10000,
+    testIsolation: true,
+  },
+  component: {
+    devServer: {
+      framework: 'create-react-app',
+      bundler: 'webpack',
+    },
+    indexHtmlFile: 'cypress/support/component-index.html',
+    setupNodeEvents(on, config) {
+      // Event node setup code here
+    },
+    supportFile: 'cypress/support/component.js',
+    specPattern: '**/*.cy.{js,jsx,ts,tsx}',
+    experimentalSingleTabRunMode: false,
+    slowTestThreshold: 250,
+    devServerPublicPathRoute: '/__cypress/src',
+  },
+  env: {
+    FOO: 'bar',
+  },
+  defaultCommandTimeout: 5000,
+  viewportWidth: 1000,
+  viewportHeight: 600,
+});
+```
+
+### File Konfigurasi `cypress/support/e2e.js`
+
+```javascript
+// This support file is loaded before each test file
+Cypress.on('uncaught:exception', (err, runnable) => {
+  // returning false here prevents Cypress from failing the test
+  return false;
+});
+
+// You can add custom commands here
+Cypress.Commands.add('login', (username, password) => {
+  cy.visit('/login');
+  cy.get('input[name=username]').type(username);
+  cy.get('input[name=password]').type(password);
+  cy.get('button[type=submit]').click();
+});
+```
+
+### File Konfigurasi `cypress/support/component.js`
+
+```javascript
+// This support file is loaded before each component test file
+Cypress.on('uncaught:exception', (err, runnable) => {
+  // returning false here prevents Cypress from failing the test
+  return false;
+});
+```
+
+## Sample E2E Test
+
+### Struktur Proyek
+
+```
+cypress/
+  e2e/
+    login.cy.js
+  support/
+    e2e.js
+    component.js
+cypress.config.js
+```
+
+### Sample Test `cypress/e2e/login.cy.js`
+
+```javascript
+describe('Login Tests', () => {
+  beforeEach(() => {
+    cy.visit('/');
+  });
+
+  it('should redirect unauthenticated user to sign-in page', () => {
+    cy.visit('/dashboard');
+    cy.url().should('include', '/login');
+  });
+
+  it('allows user to login', () => {
+    cy.login('testuser', 'testpassword');
+    cy.url().should('include', '/dashboard');
+  });
+
+  it('should show an error on invalid login', () => {
+    cy.visit('/login');
+    cy.get('input[name=username]').type('wronguser');
+    cy.get('input[name=password]').type('wrongpassword');
+    cy.get('button[type=submit]').click();
+    cy.get('.error-message').should('contain', 'Invalid username or password');
+  });
+});
+```
+
+## Sample Component Test
+
+### Struktur Proyek
+
+```
+cypress/
+  component/
+    ButtonComponent.cy.js
+  support/
+    component.js
+cypress.config.js
+src/
+  components/
+    ButtonComponent.js
+    ButtonComponent.css
+```
+
+### Sample Component `src/components/ButtonComponent.js`
+
+```javascript
+import React from 'react';
+import './ButtonComponent.css';
+
+const ButtonComponent = ({ label, onClick }) => (
+  <button className="btn" onClick={onClick}>
+    {label}
+  </button>
+);
+
+export default ButtonComponent;
+```
+
+### Sample Component Test `cypress/component/ButtonComponent.cy.js`
+
+```javascript
+import React from 'react';
+import { mount } from 'cypress/react';
+import ButtonComponent from '../../src/components/ButtonComponent';
+
+describe('ButtonComponent', () => {
+  it('renders the button with the correct label', () => {
+    const label = 'Click Me';
+    mount(<ButtonComponent label={label} />);
+    cy.get('button').should('contain', label);
+  });
+
+  it('calls the onClick handler when clicked', () => {
+    const onClick = cy.stub();
+    mount(<ButtonComponent label="Click Me" onClick={onClick} />);
+    cy.get('button').click();
+    expect(onClick).to.have.been.calledOnce;
+  });
+});
+```
+
+## Langkah-Langkah untuk Menjalankan Cypress
+
+1. **Instal Cypress**: Pastikan Cypress sudah terinstal di proyek Anda. Jika belum, instal dengan perintah berikut:
+
+   ```shell
+   npm install cypress --save-dev
+   ```
+
+2. **Buka Cypress**: Buka Cypress dengan perintah:
+
+   ```shell
+   npx cypress open
+   ```
+
+3. **Jalankan Tes E2E**: Pilih file spesifikasi di bawah folder `cypress/e2e` untuk menjalankan tes E2E.
+
+4. **Jalankan Tes Komponen**: Pilih file spesifikasi di bawah folder `cypress/component` untuk menjalankan tes komponen.
+
+Dengan mengikuti contoh konfigurasi dan tes di atas, Anda dapat memulai pengujian aplikasi Anda menggunakan Cypress. Pastikan untuk menyesuaikan konfigurasi dan tes sesuai kebutuhan proyek Anda.
