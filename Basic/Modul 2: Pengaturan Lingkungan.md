@@ -369,7 +369,7 @@ Dengan konfigurasi dan contoh tes ini, Anda siap untuk mulai menggunakan Cypress
 
 ---
 
-## Sample 2
+## Sample 2:
 
 ### File Konfigurasi `cypress.config.js`
 
